@@ -39,7 +39,7 @@ if __name__ == '__main__':
                                                '[{}/{}]'.format(fold_id + 1, hp.cross_validation_folds))
 
             X_test_sel_features = features_utils.apply_selection(method, X_test)
-            fold_acc = nn_utils.test_nn(X_test_sel_features, Y_test, trained_params, method)
+            fold_acc = nn_utils.test_nn(X_test_sel_features, Y_test, trained_params, method, hp.activation_function)
             cv_acc[method].append(fold_acc)
 
             logger.info('%d-fold cross-validation accuracy for [%s] method : [%d]',

@@ -219,8 +219,8 @@ def train_nn(X, Y, parameters, method, activation_func, fold_id):
     return parameters, costs
 
 
-def test_nn(X, Y, parameters, method):
-    cache = forward_propagation(X, parameters)
+def test_nn(X, Y, parameters, method, activation_func):
+    cache = forward_propagation(X, parameters, activation_func)
     predictions = predict(cache['A' + str(hp.num_layers)])
     # print('Pred' , predictions)
     # print('Y' , Y)
