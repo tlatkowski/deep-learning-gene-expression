@@ -41,7 +41,16 @@ def init_parameters(input_size, hidden_sizes, output_size, init_method='Xavier')
     return parameters
 
 
-def forward_propagation(X, parameters):
+def apply_non_linearity(Z, activation_func):
+    if 'tanh' in activation_func:
+        return tanh_forward(Z)
+    elif 'relu' in activation_func:
+        return relu_forward(Z)
+    else:
+        raise AssertionError
+
+
+def forward_propagation(X, parameters, activation_func):
     num_layers = int(len(parameters)/2)
     cache = dict()
     cache['A0'] = X
@@ -50,8 +59,7 @@ def forward_propagation(X, parameters):
         W = parameters['W' + str(l)]
         b = parameters['b' + str(l)]
         Z = linear_forward(cache['A' + str(l-1)], W, b)
-        # cache['A' + str(l)] = relu_forward(Z)
-        cache['A' + str(l)] = tanh_forward(Z)
+        cache['A' + str(l)] = apply_non_linearity(Z, activation_func)
 
     Z = linear_forward(Z, parameters['W' + str(num_layers)], parameters['b' + str(num_layers)])
     cache['A' + str(num_layers)] = sigmoid_forward(Z)
@@ -72,7 +80,16 @@ def compute_l2_reg_backprop(parameters, lambda_reg, batch_size):
     return l2_regs
 
 
-def backward_propagation(X, parameters, cache, Y_true, num_layers=3, lambda_reg=0.0):
+def backward_activation(Z, activation_func):
+    if 'tanh' in activation_func:
+        return tanh_backward(Z)
+    elif 'relu' in activation_func:
+        return relu_backward(Z)
+    else:
+        raise AssertionError
+
+
+def backward_propagation(X, parameters, cache, Y_true, activation_func, num_layers=3, lambda_reg=0.0):
     derivatives = dict()
     batch_size = Y_true.shape[1]
 
@@ -93,7 +110,8 @@ def backward_propagation(X, parameters, cache, Y_true, num_layers=3, lambda_reg=
     for i in reversed(range(num_layers)):
         # derivatives['dA' + str(i + 1)] = np.dot(parameters['W' + str(i + 2)].T, derivatives['dA' + str(i + 2)]) * relu_backward(cache['A' + str(i + 1)]) (h x 1) x (1 x m) x (h x m) = (h x m)
         derivatives['dA' + str(i + 1)] = np.dot(parameters['W' + str(i + 2)].T, derivatives['dA' + str(i + 2)])
-        derivatives['dA' + str(i + 1)] = derivatives['dA' + str(i + 1)] * tanh_backward(cache['A' + str(i + 1)])
+        # derivatives['dA' + str(i + 1)] = derivatives['dA' + str(i + 1)] * tanh_backward(cache['A' + str(i + 1)])
+        derivatives['dA' + str(i + 1)] = derivatives['dA' + str(i + 1)] * backward_activation(cache['A' + str(i + 1)], activation_func)
         derivatives['dW' + str(i + 1)] = 1./ batch_size * np.dot(derivatives['dA' + str(i + 1)], cache['A' + str(i)].T) + l2_regs['W' + str(i + 1)]# (h x m) x (m x n_x)
         derivatives['db' + str(i + 1)] = 1./ batch_size * np.sum(derivatives['dA' + str(i + 1)], axis=1, keepdims=True)  # (h,1)
 
@@ -173,7 +191,7 @@ def norm_data(X: pd.DataFrame):
 
 
 @PlotDecorator('cost')
-def train_nn(X, Y, parameters, method, fold_id):
+def train_nn(X, Y, parameters, method, activation_func, fold_id):
     logger.info('Training neural network for %s selection method...', method)
     tqdm_iter = tqdm(range(hp.num_epochs))
     costs = []
@@ -187,12 +205,12 @@ def train_nn(X, Y, parameters, method, fold_id):
             x_batch = X[:, batch*hp.batch_size:(batch+1)*hp.batch_size]
             y_batch = Y[:, batch * hp.batch_size:(batch + 1) * hp.batch_size]
 
-            cache = forward_propagation(x_batch, parameters)
-            derivatives = backward_propagation(x_batch, parameters, cache, y_batch, len(hp.hidden_sizes), lambda_reg=hp.lambda_reg)
+            cache = forward_propagation(x_batch, parameters, activation_func)
+            derivatives = backward_propagation(x_batch, parameters, cache, y_batch, activation_func, len(hp.hidden_sizes), lambda_reg=hp.lambda_reg)
             parameters = gradient_descent(parameters, derivatives)
 
         if i % 100 == 0:
-            cache = forward_propagation(X, parameters)  # should i freeze the parameter update?
+            cache = forward_propagation(X, parameters, activation_func)  # should i freeze the parameter update?
             predictions = predict(cache['A' + str(hp.num_layers)])
             acc=float((np.dot(Y, predictions.T) + np.dot(1 - Y, 1 - predictions.T)) / float(Y.size) * 100)
             cost = cross_entropy_cost(cache['A' + str(hp.num_layers)], Y, parameters, lambda_reg=hp.lambda_reg)

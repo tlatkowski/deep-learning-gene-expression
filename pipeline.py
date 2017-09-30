@@ -35,6 +35,7 @@ if __name__ == '__main__':
                                                        hidden_sizes=hp.hidden_sizes,
                                                        output_size=hp.output_size)
             trained_params = nn_utils.train_nn(X_train_sel_features, Y_train, init_parameters, method,
+                                               hp.activation_function,
                                                '[{}/{}]'.format(fold_id + 1, hp.cross_validation_folds))
 
             X_test_sel_features = features_utils.apply_selection(method, X_test)

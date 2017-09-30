@@ -6,8 +6,8 @@ class Hyperparameters(object):
     hidden_sizes = [80, 50]
     output_size = 1
     num_features = 100
+    activation_function = 'tanh'
     # TODO add force feature selection
-    # TODO activation function
     # TODO gradient descent with momoentum
     # TODO decorators for plots
     num_layers = len(hidden_sizes) + 1
