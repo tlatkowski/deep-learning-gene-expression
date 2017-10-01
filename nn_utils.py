@@ -190,7 +190,7 @@ def norm_data(X: pd.DataFrame):
     return X_norm
 
 
-@PlotDecorator('cost')
+# @PlotDecorator('cost')
 def train_nn(X, Y, parameters, method, activation_func, fold_id):
     logger.info('Training neural network for %s selection method...', method)
     tqdm_iter = tqdm(range(hp.num_epochs))

@@ -3,6 +3,7 @@ import logging
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold
+import tqdm
 
 import features_utils
 import nn_utils
@@ -18,12 +19,15 @@ Y_true = np.reshape(np.array([1] * 82 + [0] * 64), (1, 146))
 if __name__ == '__main__':
     data_file = 'data.txt'
     df = pd.read_csv(data_file, sep='\t', header=None, index_col=0).T
-    df['Case'] = ['AUTISM'] * dp.num_autism + ['CONTROL'] * dp.num_control
+    # df['Case'] = ['AUTISM'] * dp.num_autism + ['CONTROL'] * dp.num_control
 
     shuffle = np.random.permutation(Y_true.shape[1])
     X = nn_utils.norm_data(df)
+    X['Case'] = ['AUTISM'] * dp.num_autism + ['CONTROL'] * dp.num_control
+
     skf = StratifiedKFold(n_splits=hp.cross_validation_folds)
     cv_acc = {'fisher' : [], 'corr' : [], 'ttest' : [], 'random':[]}
+
     for fold_id, (train_idxs, test_idxs) in enumerate(skf.split(X.values, Y_true.reshape(146))):
         X_train = X.iloc[train_idxs]
         Y_train = Y_true[:, train_idxs]
@@ -34,7 +38,10 @@ if __name__ == '__main__':
             init_parameters = nn_utils.init_parameters(input_size=hp.input_size,
                                                        hidden_sizes=hp.hidden_sizes,
                                                        output_size=hp.output_size)
-            trained_params = nn_utils.train_nn(X_train_sel_features, Y_train, init_parameters, method,
+            trained_params, _ = nn_utils.train_nn(X_train_sel_features,
+                                               Y_train,
+                                               init_parameters,
+                                               method,
                                                hp.activation_function,
                                                '[{}/{}]'.format(fold_id + 1, hp.cross_validation_folds))
 
@@ -42,6 +49,7 @@ if __name__ == '__main__':
             fold_acc = nn_utils.test_nn(X_test_sel_features, Y_test, trained_params, method, hp.activation_function)
             cv_acc[method].append(fold_acc)
 
+        for m in hp.selection_methods:
             logger.info('%d-fold cross-validation accuracy for [%s] method : [%d]',
-                        hp.cross_validation_folds, method, sum(cv_acc[method])/len(cv_acc[method]))
+                        hp.cross_validation_folds, m, sum(cv_acc[m])/len(cv_acc[m]))
 

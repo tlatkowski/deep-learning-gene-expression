@@ -37,6 +37,7 @@ def correlation_with_class(data_df: pd.DataFrame, num_features):
     corr_df['std_total'] = data_df.std()
 
     corr_df['corr_coeff'] = ((corr_df['mean_autism'] - corr_df['mean_total'])**2 + (corr_df['mean_control'] - corr_df['mean_total'])**2) / 2*(corr_df['std_total'])**2
+    corr_df = corr_df.sort_values(['corr_coeff'], ascending=False)
     most_significant_features = corr_df['corr_coeff'].index[:num_features]
     # data_df['corr_coeff'] = corr_df['corr_coeff']
     return data_df, most_significant_features
@@ -56,6 +57,7 @@ def t_test(data_df: pd.DataFrame, num_features):
     num_control = len(data_df[data_df['Case'] == 'CONTROL'])
 
     t_test['ttest_coeff'] = (t_test['mean_autism'] - t_test['mean_control']) / ((t_test['std_autism'] ** 2) / num_autism + (t_test['std_control'] ** 2) / num_control)**(1/2) # TODO is it correct?
+    t_test = t_test.sort_values(['ttest_coeff'], ascending=False)
     most_significant_features = t_test['ttest_coeff'].index[:num_features]
     # data_df['ttest_coeff'] = t_test['ttest_coeff']
     return data_df, most_significant_features
