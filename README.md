@@ -18,3 +18,7 @@ More implementation details of the above methods can be found here:
 The below diagram depicts the training and testing procedures:
 
 ![](pics/model_flow.png)
+
+# Dataset
+
+The dataset is publicity available and was downloaded from [GEO (NCBI) repository](https://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc=GDS4431). Data file in this repository was cleaned up and contains only raw data with annotated genes and gene sequences annotations.
