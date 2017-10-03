@@ -14,6 +14,14 @@ More implementation details of the above methods can be found here:
 
 [Feature selection methods in application to gene expression: autism data](http://www.pe.org.pl/articles/2014/8/47.pdf)
 
+The outcome of feature selection stage is consumed by fully connected feedforward neural network. The following list of hyperparameters can be configured in this neural network:
+* number of layers,
+* number of hidden units in each layer,
+* activation function: sigmoid, tanh and ReLU,
+* L2 lambda reguralization parameter.
+* batch size,
+* number of epochs.
+
 # Model Flow
 The below diagram depicts the training and testing procedures:
 
@@ -22,3 +30,6 @@ The below diagram depicts the training and testing procedures:
 # Dataset
 
 The dataset is publicity available and was downloaded from [GEO (NCBI) repository](https://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc=GDS4431). Data file in this repository was cleaned up and contains only raw data with annotated genes and gene sequences annotations.
+
+## Dataset details
+Number of observations in this dataset equals 146 and number of genes 54613. The database consists of two classes: the first one is related to children with autism (n=82) and the second to control (healthy) children (n=64). Blood draws for all subjects were done between the spring and  summer  of  2004.  Total  RNA  was  extracted  for  microarray experiments with Affymetrix Human U133 Plus 2.0 39 Expression Arrays. 
