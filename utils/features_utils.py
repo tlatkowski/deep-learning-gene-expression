@@ -1,7 +1,6 @@
 import logging
-import time
-
 import pandas as pd
+import time
 
 from selection import correlation_with_class, fisher, ttest, random
 

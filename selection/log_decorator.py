@@ -28,5 +28,6 @@ class LogDecorator:
             else:
                 logger.info('Read %s features from file : [%s]...', self.__name, self.__path)
             return X
+
         new_f.__name__ = f.__name__
         return new_f

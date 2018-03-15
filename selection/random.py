@@ -1,9 +1,8 @@
 import logging
 import os
-
 import pandas as pd
 
-import feature_selection
+from selection import feature_selection
 from selection.log_decorator import LogDecorator
 
 logging.basicConfig(level=logging.INFO)
@@ -12,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 @LogDecorator('Random')
 def select(df: pd.DataFrame, num_features=100, force=True):
-
     feature_fn = 'features/Random.csv'
     if not os.path.exists(feature_fn) or force:
         _, t_test_features = feature_selection.random(df, num_features)

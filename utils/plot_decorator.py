@@ -20,5 +20,6 @@ class PlotDecorator:
             # plt.draw()
             plt.show()
             return params
+
         new_f.__name__ = f.__name__
         return new_f

@@ -1,24 +1,21 @@
 import logging
-
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from hyperparams import Hyperparameters as hp
 from plot_decorator import PlotDecorator
-
+from utils.hyperparams import Hyperparameters as hp
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 
 def init_parameters(input_size, hidden_sizes, output_size, init_method='Xavier'):
-
     scales = []
     layers = [input_size] + hidden_sizes
     if 'Xavier' in init_method:
         for i in range(1, len(layers) + 1):
-            scales.append(np.sqrt(2./layers[i-1]))
+            scales.append(np.sqrt(2. / layers[i - 1]))
 
     if 'Xavier' in init_method:
         first_layer_scale = scales[0]
@@ -34,7 +31,7 @@ def init_parameters(input_size, hidden_sizes, output_size, init_method='Xavier')
     for l in range(len(hidden_sizes)):
         if len(hidden_sizes) - 1 == l:  # last layer
             parameters['W' + str(l + 2)] = np.random.randn(output_size, hidden_sizes[l]) * scales[l + 1]
-            parameters['b'+ str(l + 2)] = np.zeros((output_size, 1))
+            parameters['b' + str(l + 2)] = np.zeros((output_size, 1))
         else:
             parameters['W' + str(l + 2)] = np.random.randn(hidden_sizes[l + 1], hidden_sizes[l]) * scales[l + 1]
             parameters['b' + str(l + 2)] = np.zeros((hidden_sizes[l + 1], 1))
@@ -51,14 +48,14 @@ def apply_non_linearity(Z, activation_func):
 
 
 def forward_propagation(X, parameters, activation_func):
-    num_layers = int(len(parameters)/2)
+    num_layers = int(len(parameters) / 2)
     cache = dict()
     cache['A0'] = X
 
     for l in range(1, num_layers):
         W = parameters['W' + str(l)]
         b = parameters['b' + str(l)]
-        Z = linear_forward(cache['A' + str(l-1)], W, b)
+        Z = linear_forward(cache['A' + str(l - 1)], W, b)
         cache['A' + str(l)] = apply_non_linearity(Z, activation_func)
 
     Z = linear_forward(Z, parameters['W' + str(num_layers)], parameters['b' + str(num_layers)])
@@ -67,7 +64,7 @@ def forward_propagation(X, parameters, activation_func):
 
 
 def gradient_descent(parameters, derivatives):
-    num_layers = int(len(parameters)/2)
+    num_layers = int(len(parameters) / 2)
     for l in range(1, num_layers + 1):
         parameters['W' + str(l)] = parameters['W' + str(l)] - hp.learning_rate * derivatives['dW' + str(l)]
         parameters['b' + str(l)] = parameters['b' + str(l)] - hp.learning_rate * derivatives['db' + str(l)]
@@ -100,8 +97,9 @@ def backward_propagation(X, parameters, cache, Y_true, activation_func, num_laye
                    if 'W' in name}
     # sigmoid layer
     dZ_out = cache['A' + str(num_layers + 1)] - Y_true  # 1 x m
-    dW_out = 1./ batch_size * np.dot(dZ_out, cache['A' + str(num_layers)].T) + l2_regs['W' +str(num_layers + 1)]# A1 h x m
-    db_out = 1./ batch_size * np.sum(dZ_out, axis=1, keepdims=True)  # (1,1)
+    dW_out = 1. / batch_size * np.dot(dZ_out, cache['A' + str(num_layers)].T) + l2_regs[
+        'W' + str(num_layers + 1)]  # A1 h x m
+    db_out = 1. / batch_size * np.sum(dZ_out, axis=1, keepdims=True)  # (1,1)
 
     derivatives['dA' + str(num_layers + 1)] = dZ_out
     derivatives['dW' + str(num_layers + 1)] = dW_out
@@ -111,9 +109,13 @@ def backward_propagation(X, parameters, cache, Y_true, activation_func, num_laye
         # derivatives['dA' + str(i + 1)] = np.dot(parameters['W' + str(i + 2)].T, derivatives['dA' + str(i + 2)]) * relu_backward(cache['A' + str(i + 1)]) (h x 1) x (1 x m) x (h x m) = (h x m)
         derivatives['dA' + str(i + 1)] = np.dot(parameters['W' + str(i + 2)].T, derivatives['dA' + str(i + 2)])
         # derivatives['dA' + str(i + 1)] = derivatives['dA' + str(i + 1)] * tanh_backward(cache['A' + str(i + 1)])
-        derivatives['dA' + str(i + 1)] = derivatives['dA' + str(i + 1)] * backward_activation(cache['A' + str(i + 1)], activation_func)
-        derivatives['dW' + str(i + 1)] = 1./ batch_size * np.dot(derivatives['dA' + str(i + 1)], cache['A' + str(i)].T) + l2_regs['W' + str(i + 1)]# (h x m) x (m x n_x)
-        derivatives['db' + str(i + 1)] = 1./ batch_size * np.sum(derivatives['dA' + str(i + 1)], axis=1, keepdims=True)  # (h,1)
+        derivatives['dA' + str(i + 1)] = derivatives['dA' + str(i + 1)] * backward_activation(cache['A' + str(i + 1)],
+                                                                                              activation_func)
+        derivatives['dW' + str(i + 1)] = 1. / batch_size * np.dot(derivatives['dA' + str(i + 1)],
+                                                                  cache['A' + str(i)].T) + l2_regs[
+                                             'W' + str(i + 1)]  # (h x m) x (m x n_x)
+        derivatives['db' + str(i + 1)] = 1. / batch_size * np.sum(derivatives['dA' + str(i + 1)], axis=1,
+                                                                  keepdims=True)  # (h,1)
 
     return derivatives
 
@@ -139,7 +141,7 @@ def tanh_backward(Z):
 
 
 def sigmoid_forward(Z):
-    return 1/(1+np.exp(-Z))
+    return 1 / (1 + np.exp(-Z))
 
 
 def sigmoid_backward(Z):
@@ -155,7 +157,7 @@ def cross_entropy_cost(Y_pred, Y_actual, parameters, lambda_reg=0.0):
     #  np.multiply(-np.log(a3),Y) + np.multiply(-np.log(1 - a3), 1 - Y)
     # logs = np.log(Y_pred) * Y_actual + (1 - Y_actual) * np.log(1 - Y_pred)
     logs = np.multiply(-np.log(Y_pred), Y_actual) + np.multiply(-np.log(1 - Y_pred), (1 - Y_actual))
-    cost = 1./batch_size * np.nansum(logs) + l2_term  # TODO why loss increases?
+    cost = 1. / batch_size * np.nansum(logs) + l2_term  # TODO why loss increases?
     return cost
 
 
@@ -167,8 +169,8 @@ def compute_l2_reg(parameters, lambda_reg, batch_size):
     :param batch_size:
     :return: l2 reguralized value.
     """
-    l2_req = 1./batch_size * lambda_reg/2 * np.sum([np.sum(np.square(w)) for name, w in parameters.items()
-                                                     if 'W' in name])
+    l2_req = 1. / batch_size * lambda_reg / 2 * np.sum([np.sum(np.square(w)) for name, w in parameters.items()
+                                                        if 'W' in name])
     return l2_req
 
 
@@ -196,23 +198,24 @@ def train_nn(X, Y, parameters, method, activation_func, fold_id):
     tqdm_iter = tqdm(range(hp.num_epochs))
     costs = []
     for i in tqdm_iter:
-        num_batches = X.shape[1]//hp.batch_size
+        num_batches = X.shape[1] // hp.batch_size
         idxs = np.arange(X.shape[1])
         np.random.shuffle(idxs)
         X = X[:, idxs]
         Y = Y[:, idxs]
         for batch in range(num_batches + 1):
-            x_batch = X[:, batch*hp.batch_size:(batch+1)*hp.batch_size]
+            x_batch = X[:, batch * hp.batch_size:(batch + 1) * hp.batch_size]
             y_batch = Y[:, batch * hp.batch_size:(batch + 1) * hp.batch_size]
 
             cache = forward_propagation(x_batch, parameters, activation_func)
-            derivatives = backward_propagation(x_batch, parameters, cache, y_batch, activation_func, len(hp.hidden_sizes), lambda_reg=hp.lambda_reg)
+            derivatives = backward_propagation(x_batch, parameters, cache, y_batch, activation_func,
+                                               len(hp.hidden_sizes), lambda_reg=hp.lambda_reg)
             parameters = gradient_descent(parameters, derivatives)
 
         if i % 100 == 0:
             cache = forward_propagation(X, parameters, activation_func)  # should i freeze the parameter update?
             predictions = predict(cache['A' + str(hp.num_layers)])
-            acc=float((np.dot(Y, predictions.T) + np.dot(1 - Y, 1 - predictions.T)) / float(Y.size) * 100)
+            acc = float((np.dot(Y, predictions.T) + np.dot(1 - Y, 1 - predictions.T)) / float(Y.size) * 100)
             cost = cross_entropy_cost(cache['A' + str(hp.num_layers)], Y, parameters, lambda_reg=hp.lambda_reg)
             tqdm_iter.set_postfix(accuracy=acc, loss=cost, method=method, fold_id=fold_id)
             costs.append(cost)

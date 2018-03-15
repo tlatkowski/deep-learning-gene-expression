@@ -1,9 +1,8 @@
 import logging
 import os
-
 import pandas as pd
 
-import feature_selection
+from selection import feature_selection
 from selection.log_decorator import LogDecorator
 
 logging.basicConfig(level=logging.INFO)
