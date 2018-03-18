@@ -1,9 +1,9 @@
 import logging
+
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from plot_decorator import PlotDecorator
 from utils.hyperparams import Hyperparameters as hp
 
 logger = logging.getLogger(__name__)
