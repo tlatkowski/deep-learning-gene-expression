@@ -1,4 +1,4 @@
-# deep-learning-gene-expression
+# Deep learning methods for gene expression
 Deep learning methods for feature selection in gene expression autism data.
 # Description
 This project implements several features selection algorithms intended for finding the most significant subset of genes and gene sequences stored in dataset of gene expression microarray. 
