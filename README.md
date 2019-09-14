@@ -35,3 +35,25 @@ The dataset is publicity available and was downloaded from [GEO (NCBI) repositor
 
 ## Dataset details
 Number of observations in this dataset equals 146 and number of genes 54613. The database consists of two classes: the first one is related to children with autism (n=82) and the second to control (healthy) children (n=64). Blood draws for all subjects were done between the spring and  summer  of  2004.  Total  RNA  was  extracted  for  microarray experiments with Affymetrix Human U133 Plus 2.0 39 Expression Arrays. 
+
+## Installation (Ubuntu)
+
+In order to install all requirements execute the following script:
+(If needed add 'execute' permission to *install.sh* script before running it):
+```bash
+chmod a+x bin/install.sh
+```
+
+```bash
+./bin/install.sh
+```
+
+Then activate the Virtual Environment (if needed):
+```bash
+source .venv/bin/activate
+```
+## Run the pipeline
+In order to run the pipeline execute:
+```
+python pipeline.py
+```
