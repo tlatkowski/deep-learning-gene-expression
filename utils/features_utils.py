@@ -17,12 +17,12 @@ features_methods = {
 
 def execute_selection(selection_methods: list(), data: pd.DataFrame, num_features=100, force=True):
     selected_features = dict()
-    for s in selection_methods:
+    for selection_method in selection_methods:
         start = time.time()
-        logger.debug('Making feature selection with [%s] method...', s)
-        selected_features[s] = features_methods[s].select(data, num_features=num_features, force=force)
+        logger.info('Making feature selection with [%s] method...', selection_method)
+        selected_features[selection_method] = features_methods[selection_method].select(data, num_features=num_features, force=force)
         totalTime = (time.time() - start) * 1000
-        logger.debug('[%s] feature selection last %d ms.', s, totalTime)
+        logger.info('[%s] feature selection last %d ms.', selection_method, totalTime)
     return selected_features
 
 

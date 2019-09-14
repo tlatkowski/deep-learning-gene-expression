@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 def select(df: pd.DataFrame, num_features=100, force=True):
     feature_fn = 'features/ttest.csv'
     if not os.path.exists(feature_fn) or force:
+        os.makedirs('features', exist_ok=True)
         _, t_test_features = feature_selection.t_test(df, num_features)
         pd.DataFrame(t_test_features).to_csv(feature_fn)
         X = df[t_test_features].T.values  # input size x batch size
