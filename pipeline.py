@@ -1,7 +1,9 @@
+import io
 import logging
 
 import numpy as np
 import pandas as pd
+import yaml
 from sklearn.model_selection import StratifiedKFold
 
 from utils import features_utils, nn_utils
@@ -14,6 +16,8 @@ logger.setLevel(logging.INFO)
 Y_true = np.reshape(np.array([1] * 82 + [0] * 64), (1, 146))
 
 if __name__ == '__main__':
+    with io.open('config/experiment_setup.yml') as file:
+        a = yaml.load(file)
     logger.info('Loading data...')
     df = pd.read_csv(hp.data_file, sep='\t', header=None, index_col=0).T
     logger.info('Loaded data...')

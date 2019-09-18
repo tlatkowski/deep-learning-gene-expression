@@ -1,4 +1,4 @@
-class Hyperparameters(object):
+class Hyperparameters:
     learning_rate = 0.001
     input_size = 100
     hidden_sizes = [80]
