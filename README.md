@@ -39,7 +39,7 @@ Number of observations in this dataset equals 146 and number of genes 54613. The
 
 ## Run the pipeline locally
 
-## Installation (Ubuntu)
+### Installation (Ubuntu)
 
 In order to install all requirements execute the following script:
 (If needed add 'execute' permission to *install.sh* script before running it):
@@ -61,4 +61,5 @@ python pipeline.py
 ```
 
 ## Run the pipeline on Google Colab
-TBD
+In order to run the pipeline on Google Colab use the following notebook:
+[Deep Learning Gene Expression in Google Colab](https://github.com/tlatkowski/deep-learning-gene-expression/blob/master/colab/deep_learning_feature_selection.ipynb)
