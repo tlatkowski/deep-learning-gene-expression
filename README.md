@@ -63,3 +63,31 @@ python pipeline.py
 ## Run the pipeline on Google Colab
 In order to run the pipeline on Google Colab use the following notebook:
 [Deep Learning Gene Expression in Google Colab](https://github.com/tlatkowski/deep-learning-gene-expression/blob/master/colab/deep_learning_feature_selection.ipynb)
+
+## Pipeline configuration
+
+```yaml
+selection_methods:
+  - method: fisher
+    num_features: 100
+  - method: ttest
+    num_features: 100
+  - method: corr
+    num_features: 100
+  - method: random
+    num_features: 100
+hyperparameters:
+  learning_rate: 0.001
+  input_size: 100
+  hidden_sizes: [80]
+  output_size: 1
+  num_features: 100
+  activation_function: 'tanh'
+  lambda_reg: 0.8
+  norm_data: True
+  data_file: 'data/data.tsv'
+training:
+  num_epochs: 10000
+  cross_validation_folds: 10
+  batch_size: 20  # online learning when batch_size=1
+```
