@@ -23,7 +23,7 @@ def execute_selection(selection_methods: list(), data: pd.DataFrame, force=True)
     selection_method_name =  selection_method['method']
     num_features =  selection_method['num_features']
     logger.info('Making feature selection with [%s] method...', selection_method_name)
-    selected_features[selection_method] = features_methods[selection_method_name].select(data,
+    selected_features[selection_method_name] = features_methods[selection_method_name].select(data,
                                                                                     num_features=num_features,
                                                                                     force=force)
     totalTime = (time.time() - start) * 1000
