@@ -46,12 +46,13 @@ def main():
                                             method,
                                             hp.activation_function,
                                             '[{}/{}]'.format(fold_id + 1,
-                                                             hp.cross_validation_folds))
+                                                             hp.cross_validation_folds),
+                                            hp)
       
       X_test_sel_features = features_utils.apply_selection(method, X_test,
                                                            num_features=hp.num_features)
       fold_acc = nn_utils.test_nn(X_test_sel_features, Y_test, trained_params, method,
-                                  hp.activation_function)
+                                  hp.activation_function, hp)
       cv_acc[method].append(fold_acc)
     
     for m in hp.selection_methods:

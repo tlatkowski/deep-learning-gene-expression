@@ -4,8 +4,6 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 
-from utils.hyperparams import Hyperparameters as hp
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -64,12 +62,12 @@ def forward_propagation(X, parameters, activation_func):
   return cache
 
 
-def gradient_descent(parameters, derivatives):
+def gradient_descent(parameters, derivatives, learning_rate):
   num_layers = int(len(parameters) / 2)
   for l in range(1, num_layers + 1):
-    parameters['W' + str(l)] = parameters['W' + str(l)] - hp.learning_rate * derivatives[
+    parameters['W' + str(l)] = parameters['W' + str(l)] - learning_rate * derivatives[
       'dW' + str(l)]
-    parameters['b' + str(l)] = parameters['b' + str(l)] - hp.learning_rate * derivatives[
+    parameters['b' + str(l)] = parameters['b' + str(l)] - learning_rate * derivatives[
       'db' + str(l)]
   return parameters
 
@@ -201,7 +199,7 @@ def norm_data(X: pd.DataFrame):
 
 
 # @PlotDecorator('cost')
-def train_nn(X, Y, parameters, method, activation_func, fold_id):
+def train_nn(X, Y, parameters, method, activation_func, fold_id, hp):
   logger.info('Training neural network for %s selection method...', method)
   tqdm_iter = tqdm(range(hp.num_epochs))
   costs = []
@@ -218,7 +216,7 @@ def train_nn(X, Y, parameters, method, activation_func, fold_id):
       cache = forward_propagation(x_batch, parameters, activation_func)
       derivatives = backward_propagation(x_batch, parameters, cache, y_batch, activation_func,
                                          len(hp.hidden_sizes), lambda_reg=hp.lambda_reg)
-      parameters = gradient_descent(parameters, derivatives)
+      parameters = gradient_descent(parameters, derivatives, hp.learning_rate)
     
     if i % 100 == 0:
       cache = forward_propagation(X, parameters,
@@ -233,7 +231,7 @@ def train_nn(X, Y, parameters, method, activation_func, fold_id):
   return parameters, costs
 
 
-def test_nn(X, Y, parameters, method, activation_func):
+def test_nn(X, Y, parameters, method, activation_func, hp):
   cache = forward_propagation(X, parameters, activation_func)
   predictions = predict(cache['A' + str(hp.num_layers)])
   # print('Pred' , predictions)
