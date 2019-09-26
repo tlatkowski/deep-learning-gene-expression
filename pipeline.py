@@ -26,7 +26,7 @@ def main():
   X = nn_utils.norm_data(df)
   X['Case'] = ['AUTISM'] * dp.num_autism + ['CONTROL'] * dp.num_control
   
-  skf = StratifiedKFold(n_splits=hp['training']['cross_validation_folds'])
+  skf = StratifiedKFold(n_splits=hp.cross_validation_folds)
   cv_acc = {'fisher': [], 'corr': [], 'ttest': [], 'random': []}
   
   for fold_id, (train_idxs, test_idxs) in enumerate(skf.split(X.values, Y_true.reshape(146))):
