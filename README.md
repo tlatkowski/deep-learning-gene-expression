@@ -66,6 +66,9 @@ In order to run the pipeline on Google Colab use the following notebook:
 
 ## Pipeline configuration
 
+Pipeline gives you possibility to tweak training parameters. In order to modify them use configuration file
+placed in `./config/experiment_setup.yml`. Below you can find the default configuration:
+
 ```yaml
 selection_methods:
   - method: fisher
